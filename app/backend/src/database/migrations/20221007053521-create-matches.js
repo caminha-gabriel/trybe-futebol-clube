@@ -10,6 +10,7 @@ module.exports = {
       home_team: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        foreignKey: true,
       },
       home_team_goals: {
         type: Sequelize.INTEGER,
@@ -18,6 +19,7 @@ module.exports = {
       away_team: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        foreignKey: true,
       },
       away_team_goals: {
         type: Sequelize.INTEGER,

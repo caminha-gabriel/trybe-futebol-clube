@@ -1,4 +1,6 @@
 import * as express from 'express';
+import errorMiddleware from './middlewares/errorMiddleware';
+import userRoute from './routes/user.route';
 
 class App {
   public app: express.Express;
@@ -10,8 +12,10 @@ class App {
 
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
-  }
 
+    this.createRoutes();
+  }
+  
   private config():void {
     const accessControl: express.RequestHandler = (_req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*');
@@ -19,13 +23,18 @@ class App {
       res.header('Access-Control-Allow-Headers', '*');
       next();
     };
-
+    
     this.app.use(express.json());
     this.app.use(accessControl);
   }
-
+  
   public start(PORT: string | number):void {
     this.app.listen(PORT, () => console.log(`Running on port ${PORT}`));
+  }
+  
+  private createRoutes(): void {
+    this.app.use(userRoute);
+    this.app.use(errorMiddleware);
   }
 }
 

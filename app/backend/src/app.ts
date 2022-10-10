@@ -34,6 +34,7 @@ class App {
   private createRoutes(): void {
     this.app.use(routes.userRoute);
     this.app.use(routes.teamRoute);
+    this.app.use(routes.matchRoute);
     this.app.use(errorMiddleware);
   }
 }

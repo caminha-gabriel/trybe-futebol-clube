@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import IUserLoginInfo from '../interfaces/IUserLoginInfo';
 import IUserController from '../interfaces/IUserController';
 import UserService from '../services/user.service';
-import { StatusCodes } from 'http-status-codes';
 
 export default class UserController implements IUserController {
   public async login(req: Request, res: Response): Promise<Response> {
@@ -14,12 +13,9 @@ export default class UserController implements IUserController {
     return res.status(code).json(content);
   }
    
-  public async validateAuth(req: Request, res: Response): Promise<Response> {
-    const { authorization } = req.headers;
-
-    if (!authorization) return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid authorization token' });
-    
-    const { message, code, content } = await UserService.validateAuth(authorization);
+  public async validateRole(req: Request, res: Response): Promise<Response> {
+    const { email } = req.body;
+    const { message, code, content } = await UserService.validateRole(email);
 
     if (message) {
       return res.status(code).json({ message });

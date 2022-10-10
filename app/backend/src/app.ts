@@ -1,7 +1,6 @@
 import * as express from 'express';
 import errorMiddleware from './middlewares/errorMiddleware';
-import userRoute from './routes/user.route';
-
+import routes from './routes';
 class App {
   public app: express.Express;
 
@@ -33,7 +32,8 @@ class App {
   }
   
   private createRoutes(): void {
-    this.app.use(userRoute);
+    this.app.use(routes.userRoute);
+    this.app.use(routes.teamRoute);
     this.app.use(errorMiddleware);
   }
 }

@@ -14,4 +14,16 @@ export default class MatchController implements IMatchController {
 
     return res.status(code).json(content);
   }
+
+  public async saveMatch(req: Request, res: Response): Promise<Response> {
+    const { body: match } = req;
+
+    const { message, code, content } = await MatchService.saveMatch(match);
+
+    if (message) {
+      return res.status(code).json({ message });
+    }
+
+    return res.status(code).json(content);
+  }
 }

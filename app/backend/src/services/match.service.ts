@@ -37,4 +37,18 @@ export default class MatchService {
       message: 'Content not found'
     }
   }
+
+  static async saveMatch(matchData: Match): Promise<IServiceResponse> {
+    const result = await Match.create(matchData);
+
+    if (result) return {
+      code: Number(StatusCodes.CREATED),
+      content: result
+    }
+
+    return {
+      code: Number(StatusCodes.INTERNAL_SERVER_ERROR),
+      message: 'Something went wrong'
+    }
+  }
 }

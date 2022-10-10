@@ -8,7 +8,7 @@ export default async function validateAuth(req: Request, res: Response, next: Ne
   const decodedToken = decodeToken(authorization as string) as User;
 
   const foundUser = await User.findOne({ where: { email: decodedToken.email }});
-  if (!foundUser) return res.status(Number(StatusCodes.UNAUTHORIZED)).json({ message: 'Invalid authorization token' });
+  if (!foundUser) return res.status(Number(StatusCodes.UNAUTHORIZED)).json({ message: 'Token must be a valid token' });
   req.body.email = foundUser.email;
   next();
 }

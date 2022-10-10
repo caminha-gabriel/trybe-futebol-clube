@@ -39,6 +39,16 @@ export default class MatchService {
   }
 
   static async saveMatch(matchData: Match): Promise<IServiceResponse> {
+    const { homeTeam: homeTeamId, awayTeam: awayTeamId } = matchData;
+  
+    const homeTeam = await Team.findByPk(homeTeamId);
+    const awayTeam = await Team.findByPk(awayTeamId);
+
+    if (!homeTeam || !awayTeam) return {
+      code: Number(StatusCodes.NOT_FOUND),
+      message: 'There is no team with such id!'
+    }
+
     const result = await Match.create(matchData);
 
     if (result) return {

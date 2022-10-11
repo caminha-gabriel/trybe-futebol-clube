@@ -6,4 +6,6 @@ export default interface IMatchController {
   saveMatch(req: Request, res: Response): Promise<Response>;
 
   finishMatch(req: Request, res: Response): Promise<Response>;
+
+  updateMatch(req: Request, res: Response): Promise<Response>;
 }

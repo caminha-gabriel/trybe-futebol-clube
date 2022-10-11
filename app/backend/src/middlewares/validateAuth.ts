@@ -5,10 +5,16 @@ import { NextFunction, Request, Response } from 'express';
 
 export default async function validateAuth(req: Request, res: Response, next: NextFunction) {
   const { authorization } = req.headers;
-  const decodedToken = decodeToken(authorization as string) as User;
+  let decodedTokenUser;
 
-  const foundUser = await User.findOne({ where: { email: decodedToken.email }});
-  if (!foundUser) return res.status(Number(StatusCodes.UNAUTHORIZED)).json({ message: 'Token must be a valid token' });
+  if (typeof (authorization) === 'string') {
+    decodedTokenUser = decodeToken(authorization) as User;
+  } else {
+    return res.status(Number(StatusCodes.UNAUTHORIZED)).json({ message: 'Token must be a valid token' });
+  }
+
+  const foundUser = await User.findOne({ where: { email: decodedTokenUser.email }});
+  if (!foundUser) return res.status(Number(StatusCodes.UNAUTHORIZED)).json({ message: 'Content not found' });
   req.body.email = foundUser.email;
   next();
 }

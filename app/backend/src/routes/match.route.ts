@@ -10,5 +10,6 @@ const matchController = new MatchController();
 matchRoute.get('/matches', matchController.getAll);
 matchRoute.post('/matches', validateAuth, validateTeamsDistinction, matchController.saveMatch);
 matchRoute.patch('/matches/:id/finish', matchController.finishMatch);
+matchRoute.patch('/matches/:id', matchController.updateMatch);
 
 export default matchRoute;

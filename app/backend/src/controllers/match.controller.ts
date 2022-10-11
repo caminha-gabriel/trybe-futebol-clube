@@ -34,4 +34,13 @@ export default class MatchController implements IMatchController {
 
     return res.status(code).json({ message });
   }
+
+  public async updateMatch(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const { homeTeamGoals, awayTeamGoals } = req.body;
+
+    const { message, code } = await MatchService.updateMatch(Number(id), Number(homeTeamGoals), Number(awayTeamGoals));
+
+    return res.status(code).json({ message });
+  }
 }

@@ -77,4 +77,20 @@ export default class MatchService {
       message: 'Finished'
     }
   }
+
+  static async updateMatch(id: number, homeTeamGoals: number, awayTeamGoals: number): Promise<IServiceResponse> {
+    const foundMatch = await Match.findByPk(id);
+
+    if (!foundMatch) return {
+      code: Number(StatusCodes.NOT_FOUND),
+      message: 'Match not found'
+    }
+
+    foundMatch.update({ homeTeamGoals, awayTeamGoals });
+
+    return {
+      code: Number(StatusCodes.OK),
+      message: 'Match updated'
+    }
+  }
 }

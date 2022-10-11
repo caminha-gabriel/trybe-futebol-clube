@@ -7,9 +7,9 @@ export default async function validateAuth(req: Request, res: Response, next: Ne
   const { authorization } = req.headers;
   let decodedTokenUser;
 
-  if (typeof (authorization) === 'string') {
-    decodedTokenUser = decodeToken(authorization) as User;
-  } else {
+  try {
+    decodedTokenUser = decodeToken(authorization as string) as User;
+  } catch (error) {
     return res.status(Number(StatusCodes.UNAUTHORIZED)).json({ message: 'Token must be a valid token' });
   }
 

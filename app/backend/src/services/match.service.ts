@@ -61,4 +61,20 @@ export default class MatchService {
       message: 'Something went wrong'
     }
   }
+
+  static async finishMatch(id: number): Promise<IServiceResponse> {
+    const foundMatch = await Match.findByPk(id);
+
+    if (!foundMatch) return {
+      code: Number(StatusCodes.NOT_FOUND),
+      message: 'Match not found'
+    }
+
+    foundMatch.update({ inProgress: false });
+
+    return {
+      code: Number(StatusCodes.OK),
+      message: 'Finished'
+    }
+  }
 }

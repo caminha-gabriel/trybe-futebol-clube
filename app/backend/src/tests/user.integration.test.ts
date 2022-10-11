@@ -1,46 +1,101 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
-import { expect } from 'chai';
-import { StatusCodes } from 'http-status-codes';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import IUserLoginInfo from '../interfaces/IUserLoginInfo';
 import User from '../database/models/user.model';
+import {
+  validUserLoginResponse,
+  validUserLoginInfo,
+  userInfoWithoutEmail,
+  userInfoWithoutPassword,
+  validToken,
+} from '../mocks/user.mocks';
+
+import { StatusCodes } from 'http-status-codes';
 
 chai.use(chaiHttp);
 
-
-const dumpUser = {
-  username: 'user',
-  role: 'role',
-};
-
-const dumpUserLoginInfo = {
-  email: 'email@email.com',
-  password: '1234',
-}
+const { expect } = chai;
 
 describe('/login', () => {
   describe('POST', () => {
+    describe('When receiving valid info', () => {
+      beforeEach(async () => {
+        sinon.stub(User, 'findOne').resolves(validUserLoginResponse as User);
+      });
 
-    beforeEach(() => {
-      sinon.stub(User, 'findOne').resolves({ id: 1, ...dumpUser } as User);
+      afterEach(async () => {
+        (User.findOne as sinon.SinonStub).restore();
+      });
+
+      it('returns 200 on response status', async () => {
+        const response = await chai
+          .request(app)
+          .post('/login')
+          .send(validUserLoginInfo as IUserLoginInfo);
+        expect(response.status).to.be.equal(StatusCodes.OK);
+      });
+
+      it('returns a token on response body', async () => {
+        const response = await chai
+          .request(app)
+          .post('/login')
+          .send(validUserLoginInfo as IUserLoginInfo);
+        expect(response.body).to.have.property('token');
+      });
     });
+    describe('when receiving info without email', () => {
+      it('returns 400 on response status', async () => {
+        const response = await chai
+          .request(app)
+          .post('/login')
+          .send(userInfoWithoutEmail);
+        expect(response.status).to.be.equal(StatusCodes.BAD_REQUEST);
+      });
 
-    afterEach(() => {
-      (User.findOne as sinon.SinonStub).restore();
+      it('returns message "All fields must be filled"', async () => {
+        const response = await chai
+          .request(app)
+          .post('/login')
+          .send(userInfoWithoutEmail);
+        expect(response.body).to.have.property('message');
+        expect(response.body.message).to.be.equal('All fields must be filled');
+      });
     });
+  });
+});
 
-    it('return 200 on response status', async () => {
-      const response = await chai.request(app).post('/login').send(dumpUserLoginInfo as IUserLoginInfo);
-      expect(response.status).to.be.equal(StatusCodes.OK);
-    });
+describe('/login/validate', () => {
+  describe('GET', () => {
+    describe('when receiving valid info', () => {
+      beforeEach(async () => {
+        sinon.stub(User, 'findOne').resolves(validUserLoginResponse as User);
+      });
 
-    it('return a token on response body', async () => {
-      const response = await chai.request(app).post('/login').send(dumpUserLoginInfo as IUserLoginInfo);
-      expect(response.body).to.have.property('token');
+      afterEach(async () => {
+        (User.findOne as sinon.SinonStub).restore();
+      });
+
+      it('returns 200 on response status', async () => {
+        const response = await chai
+          .request(app)
+          .get('/login/validate')
+          .set('authorization', validToken)
+          .send(userInfoWithoutPassword);
+        expect(response.status).to.be.equal(StatusCodes.OK);
+      });
+
+      it('returns user\'s role', async () => {
+        const response = await chai
+          .request(app)
+          .get('/login/validate')
+          .set('authorization', validToken)
+          .send(userInfoWithoutPassword);
+          expect(response.body).to.have.property('role');
+      })
     });
   });
 });

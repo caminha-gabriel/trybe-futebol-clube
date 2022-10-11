@@ -33,6 +33,6 @@ export default class UserService {
       content: { role: foundUser.role }
     }
 
-    return { code: StatusCodes.NOT_FOUND, content: { message: 'User not found' }};
+    return { code: StatusCodes.NOT_FOUND, message: 'User not found' };
   }
 }
